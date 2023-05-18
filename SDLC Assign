@@ -1,0 +1,65 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class TextAnalyer {
+    public static void main(String[] args) {
+        String filePath = "C:/Users/peyto/Downloads/The Project Gutenberg eBook of The .txt";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            StringBuilder poemBuilder = new StringBuilder();
+            String line;
+
+            
+            while ((line = reader.readLine()) != null) {
+
+                line = line.replaceAll("<.*?>", "");
+
+
+                if (line.contains("The Project Gutenberg eBook of The Raven, by Edgar Allan Poe")) {
+                    poemBuilder.append(line);
+                    break;
+                }
+            }
+
+
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("END OF THE PROJECT GUTENBERG EBOOK THE RAVEN ")) {
+                    break;
+                }
+                poemBuilder.append(line);
+            }
+
+
+            String poemText = poemBuilder.toString();
+            String[] words = poemText.split("\\W+"); // Split by non-word characters
+
+            Map<String, Integer> wordFrequencies = new HashMap<>();
+            for (String word : words) {
+                word = word.toLowerCase();
+                int frequency = wordFrequencies.getOrDefault(word, 0);
+                wordFrequencies.put(word, frequency + 1);
+            }
+
+
+            Map<String, Integer> sortedFrequencies = new TreeMap<>((w1, w2) -> {
+                int freq1 = wordFrequencies.get(w1);
+                int freq2 = wordFrequencies.get(w2);
+                return Integer.compare(freq2, freq1);
+            });
+            sortedFrequencies.putAll(wordFrequencies);
+
+
+            for (Map.Entry<String, Integer> entry : sortedFrequencies.entrySet()) {
+                String word = entry.getKey();
+                int frequency = entry.getValue();
+                System.out.println(word + ": " + frequency);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
