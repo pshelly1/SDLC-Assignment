@@ -7,18 +7,17 @@ import java.util.TreeMap;
 
 public class TextAnalyer {
     public static void main(String[] args) {
-        String filePath = "C:/Users/peyto/Downloads/The Project Gutenberg eBook of The .txt";
+        String filePath = "C:/Users/peyto/OneDrive/Desktop/TheRavenPoemWithHTMLTags.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             StringBuilder poemBuilder = new StringBuilder();
             String line;
 
-            
+
             while ((line = reader.readLine()) != null) {
 
                 line = line.replaceAll("<.*?>", "");
-
-
+                
                 if (line.contains("The Project Gutenberg eBook of The Raven, by Edgar Allan Poe")) {
                     poemBuilder.append(line);
                     break;
