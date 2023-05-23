@@ -1,0 +1,47 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+public class TextAnalyer {
+    public static void main(String[] args) {
+        String filePath = "C:/Users/peyto/OneDrive/Desktop/TheRavenPoemWithHTMLTags.txt";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            StringBuilder poemBuilder = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                line = line.replaceAll("<.*?>", "");
+                poemBuilder.append(line);
+            }
+
+            String poemText = poemBuilder.toString();
+            String[] words = poemText.split("\\W+"); // Split by non-word characters
+
+            Map<String, Integer> wordFrequencies = new HashMap<>();
+            for (String word : words) {
+                word = word.toLowerCase();
+                int frequency = wordFrequencies.getOrDefault(word, 0);
+                wordFrequencies.put(word, frequency + 1);
+            }
+
+            Map<String, Integer> sortedFrequencies = wordFrequencies.entrySet()
+                    .stream()
+                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                    .limit(20)
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, TreeMap::new));
+
+            for (Map.Entry<String, Integer> entry : sortedFrequencies.entrySet()) {
+                String word = entry.getKey();
+                int frequency = entry.getValue();
+                System.out.println(word + ": " + frequency);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+}
